@@ -133,8 +133,6 @@ http_archive(
     url = "https://github.com/protocolbuffers/protobuf/archive/v3.17.3.tar.gz",
 )
 
-load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
-
 protobuf_deps()
 
 # Setup Nanopb protoc plugin.
@@ -288,32 +286,6 @@ go_rules_dependencies()
 
 go_register_toolchains()
 
-# Set up bazel package manager for golang.
-# Required by: com_github_bazelbuild_buildtools.
-# Used in modules: None.
-http_archive(
-    name = "bazel_gazelle",
-    sha256 = "b85f48fa105c4403326e9525ad2b2cc437babaa6e15a3fc0b1dbab0ab064bc7c",
-    urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.22.2/bazel-gazelle-v0.22.2.tar.gz",
-        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.22.2/bazel-gazelle-v0.22.2.tar.gz",
-    ],
-)
-
-load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
-
-gazelle_dependencies()
-
-# Set up bazel buildtools (bazel linter and formatter).
-# Required by: pigweed.
-# Used in modules: //:all (bazel specific tools).
-http_archive(
-    name = "com_github_bazelbuild_buildtools",
-    sha256 = "c28eef4d30ba1a195c6837acf6c75a4034981f5b4002dda3c5aa6e48ce023cf1",
-    strip_prefix = "buildtools-4.0.1",
-    url = "https://github.com/bazelbuild/buildtools/archive/4.0.1.tar.gz",
-)
-
 load("//pw_build:target_config.bzl", "pigweed_config")
 
 # Configure Pigweeds backend.
@@ -380,4 +352,5 @@ maven_install(
 register_toolchains(
     # Use default facade backend implementations.
     "//pw_build:default_facade_backends_toolchain",
+    "//targets/...",
 )

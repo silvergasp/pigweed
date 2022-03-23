@@ -408,7 +408,6 @@ _MODULES_THAT_TEST_WITH_BAZEL = [
     '//pw_thread_stl/...',
     '//pw_unit_test/...',
     '//pw_varint/...',
-    '//:buildifier_test',
 ]
 
 
