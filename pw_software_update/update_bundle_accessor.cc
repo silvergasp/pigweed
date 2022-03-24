@@ -168,7 +168,7 @@ Status VerifyMetadataSignatures(protobuf::Bytes message,
       "Not enough number of signatures verified. Requires at least %u, "
       "verified %u",
       threshold.value(),
-      verified_count);
+      static_cast<uint32_t>(verified_count));
   return Status::Unauthenticated();
 }
 
