@@ -32,7 +32,8 @@ pw_cc_library(
 )
 
 pw_cc_facade(
-    name = "system_clock_facade",
+    name = "system_clock",
+    srcs = ["system_clock.cc"],
     hdrs = [
         "public/pw_chrono/internal/system_clock_macros.h",
         "public/pw_chrono/system_clock.h",
@@ -44,30 +45,8 @@ pw_cc_facade(
     ],
 )
 
-pw_cc_library(
-    name = "system_clock",
-    srcs = [
-        "system_clock.cc",
-    ],
-    deps = [
-        ":system_clock_facade",
-        "@pigweed_config//:pw_chrono_system_clock_backend",
-    ],
-)
-
-pw_cc_library(
-    name = "system_clock_backend_multiplexer",
-    visibility = ["@pigweed_config//:__pkg__"],
-    deps = select({
-        "//pw_build/constraints/rtos:freertos": ["//pw_chrono_freertos:system_clock"],
-        "//pw_build/constraints/rtos:embos": ["//pw_chrono_embos:system_clock"],
-        "//pw_build/constraints/rtos:threadx": ["//pw_chrono_threadx:system_clock"],
-        "//conditions:default": ["//pw_chrono_stl:system_clock"],
-    }),
-)
-
-pw_cc_library(
-    name = "system_timer_facade",
+pw_cc_facade(
+    name = "system_timer",
     hdrs = [
         "public/pw_chrono/system_timer.h",
     ],
@@ -76,24 +55,6 @@ pw_cc_library(
         ":system_clock",
         "//pw_function",
     ],
-)
-
-pw_cc_library(
-    name = "system_timer",
-    deps = [
-        ":system_timer_facade",
-        "@pigweed_config//:pw_chrono_system_timer_backend",
-    ],
-)
-
-pw_cc_library(
-    name = "system_timer_backend_multiplexer",
-    visibility = ["@pigweed_config//:__pkg__"],
-    deps = select({
-        "//pw_build/constraints/rtos:freertos": ["//pw_chrono_freertos:system_timer"],
-        "//pw_build/constraints/rtos:embos": ["//pw_chrono_embos:system_timer"],
-        "//conditions:default": ["//pw_chrono_stl:system_timer"],
-    }),
 )
 
 pw_cc_library(

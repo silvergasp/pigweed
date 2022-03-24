@@ -46,7 +46,7 @@ pw_cc_library(
     target_compatible_with = select(TARGET_COMPATIBLE_WITH_HOST_SELECT),
     deps = [
         ":id_headers",
-        "//pw_thread:id_facade",
+        "//pw_thread:id.facade",
     ],
 )
 
@@ -72,7 +72,7 @@ pw_cc_library(
     deps = [
         ":sleep_headers",
         "//pw_chrono:system_clock",
-        "//pw_thread:sleep_facade",
+        "//pw_thread:sleep.facade",
     ],
 )
 
@@ -97,7 +97,7 @@ pw_cc_library(
     target_compatible_with = select(TARGET_COMPATIBLE_WITH_HOST_SELECT),
     deps = [
         ":thread_headers",
-        "//pw_thread:thread_facade",
+        "//pw_thread:thread.facade",
     ],
 )
 
@@ -109,7 +109,7 @@ pw_cc_library(
     target_compatible_with = select(TARGET_COMPATIBLE_WITH_HOST_SELECT),
     deps = [
         "//pw_thread:test_threads_header",
-        "//pw_thread:thread_facade",
+        "//pw_thread:thread.facade",
     ],
 )
 
@@ -140,6 +140,6 @@ pw_cc_library(
     target_compatible_with = select(TARGET_COMPATIBLE_WITH_HOST_SELECT),
     deps = [
         ":yield_headers",
-        "//pw_thread:yield_facade",
+        "//pw_thread:yield.facade",
     ],
 )

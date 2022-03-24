@@ -24,15 +24,18 @@ package(default_visibility = ["//visibility:public"])
 licenses(["notice"])
 
 pw_cc_facade(
-    name = "sha256_facade",
+    name = "sha256",
     hdrs = [
         "public/pw_crypto/sha256.h",
     ],
+    default_backend = ":sha256_boringssl",
     includes = ["public"],
     deps = [
         "//pw_assert",
         "//pw_bytes",
+        "//pw_log",
         "//pw_status",
+        "//pw_stream",
     ],
 )
 
@@ -44,7 +47,7 @@ pw_cc_library(
         "public_overrides/mbedtls/pw_crypto/sha256_backend.h",
     ],
     includes = ["public_overrides"],
-    deps = [":sha256_facade"],
+    deps = [":sha256.facade"],
 )
 
 pw_cc_library(
@@ -54,15 +57,21 @@ pw_cc_library(
         "public/pw_crypto/sha256_boringssl.h",
         "public_overrides/boringssl/pw_crypto/sha256_backend.h",
     ],
-    includes = ["public_overrides"],
-    deps = [":sha256_facade"],
+    includes = [
+        "public",
+        "public_overrides/boringssl",
+    ],
+    deps = [
+        ":sha256.facade",
+        "@boringssl//:bssl",
+    ],
 )
 
 pw_cc_test(
     name = "sha256_test",
     srcs = ["sha256_test.cc"],
     deps = [
-        ":sha256_facade",
+        ":sha256.facade",
         "//pw_unit_test",
     ],
 )
@@ -75,24 +84,25 @@ pw_cc_library(
         "public_overrides/mock/pw_crypto/sha256_backend.h",
     ],
     includes = ["public_overrides"],
-    deps = [":sha256_facade"],
+    deps = [":sha256.facade"],
 )
 
 pw_cc_test(
     name = "sha256_mock_test",
     srcs = ["sha256_mock_test.cc"],
     deps = [
-        ":sha256_facade",
+        ":sha256.facade",
         ":sha256_mock",
         "//pw_unit_test",
     ],
 )
 
 pw_cc_facade(
-    name = "ecdsa_facade",
+    name = "ecdsa",
     hdrs = [
         "public/pw_crypto/ecdsa.h",
     ],
+    default_backend = ":ecdsa_boringssl",
     includes = ["public"],
     deps = [
         "//pw_bytes",
@@ -103,13 +113,17 @@ pw_cc_facade(
 pw_cc_library(
     name = "ecdsa_mbedtls",
     srcs = ["ecdsa_mbedtls.cc"],
-    deps = [":ecdsa_facade"],
+    deps = [":ecdsa.facade"],
 )
 
 pw_cc_library(
     name = "ecdsa_boringssl",
     srcs = ["ecdsa_boringssl.cc"],
-    deps = [":ecdsa_facade"],
+    deps = [
+        ":ecdsa.facade",
+        "//pw_log",
+        "@boringssl//:bssl",
+    ],
 )
 
 pw_cc_library(
@@ -118,14 +132,14 @@ pw_cc_library(
         "ecdsa_uecc.cc",
         "micro-ecc/uEDD.c",
     ],
-    deps = [":ecdsa_facade"],
+    deps = [":ecdsa.facade"],
 )
 
 pw_cc_test(
     name = "ecdsa_test",
     srcs = ["ecdsa_test.cc"],
     deps = [
-        ":ecdsa_facade",
+        ":ecdsa",
         "//pw_unit_test",
     ],
 )

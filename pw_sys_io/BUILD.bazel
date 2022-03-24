@@ -23,8 +23,9 @@ package(default_visibility = ["//visibility:public"])
 licenses(["notice"])
 
 pw_cc_facade(
-    name = "facade",
+    name = "pw_sys_io",
     hdrs = ["public/pw_sys_io/sys_io.h"],
+    default_backend = "//pw_sys_io_stdio",
     includes = ["public"],
     deps = [
         "//pw_span",
@@ -36,29 +37,8 @@ pw_cc_library(
     name = "default_putget_bytes",
     srcs = ["sys_io.cc"],
     deps = [
-        ":facade",
+        ":pw_sys_io.facade",
         "//pw_span",
         "//pw_status",
     ],
-)
-
-pw_cc_library(
-    name = "pw_sys_io",
-    hdrs = ["public/pw_sys_io/sys_io.h"],
-    deps = [
-        ":facade",
-        "//pw_span",
-        "//pw_status",
-        "@pigweed_config//:pw_sys_io_backend",
-    ],
-)
-
-pw_cc_library(
-    name = "backend_multiplexer",
-    visibility = ["@pigweed_config//:__pkg__"],
-    deps = select({
-        "//pw_build/constraints/chipset:stm32f429": ["@pigweed//pw_sys_io_baremetal_stm32f429"],
-        "//pw_build/constraints/chipset:lm3s6965evb": ["@pigweed//pw_sys_io_baremetal_lm3s6965evb"],
-        "//conditions:default": ["@pigweed//pw_sys_io_stdio"],
-    }),
 )

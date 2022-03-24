@@ -15,8 +15,13 @@
 load(
     "//pw_build:pigweed.bzl",
     "pw_cc_binary",
+    "pw_cc_facade",
     "pw_cc_library",
     "pw_cc_test",
+)
+load(
+    "//pw_protobuf_compiler:proto.bzl",
+    "pw_proto_library",
 )
 
 package(default_visibility = ["//visibility:public"])
@@ -51,11 +56,12 @@ pw_cc_library(
     ],
     deps = [
         ":headers",
+        ":pw_trace_tokenized_time",
         "//pw_assert",
         "//pw_log",
         "//pw_status",
         "//pw_tokenizer",
-        "//pw_trace:facade",
+        "//pw_trace:pw_trace.facade",
         "//pw_varint",
     ],
 )
@@ -72,9 +78,10 @@ pw_cc_library(
         "public",
     ],
     deps = [
+        ":protos_cc",
+        ":pw_trace_tokenized_buffer",
         "//pw_log",
         "//pw_trace",
-        "//pw_trace_tokenized_buffer",
     ],
 )
 
@@ -100,6 +107,7 @@ pw_cc_library(
     ],
     deps = [
         ":trace_buffer_headers",
+        "//pw_bytes",
         "//pw_ring_buffer",
         "//pw_status",
     ],
@@ -116,6 +124,7 @@ pw_cc_library(
     deps = [
         ":trace_buffer_headers",
         "//pw_base64",
+        "//pw_bytes",
         "//pw_log",
         "//pw_string",
     ],
@@ -127,16 +136,12 @@ proto_library(
         "pw_trace_protos/trace.proto",
         "pw_trace_protos/trace_rpc.proto",
     ],
+    strip_import_prefix = "//pw_trace_tokenized",
 )
 
-pw_cc_library(
-    name = "pw_trace_tokenized_fake_time",
-    srcs = [
-        "fake_trace_time.cc",
-    ],
-    deps = [
-        "//pw_trace",
-    ],
+pw_proto_library(
+    name = "protos_cc",
+    deps = [":protos"],
 )
 
 pw_cc_test(
@@ -149,10 +154,9 @@ pw_cc_test(
         "pw_trace_test/public_overrides",
     ],
     deps = [
-        ":backend",
-        ":facade",
-        ":pw_trace",
+        ":pw_trace_tokenized",
         "//pw_preprocessor",
+        "//pw_trace",
         "//pw_unit_test",
     ],
 )
@@ -163,10 +167,10 @@ pw_cc_test(
         "trace_buffer_test.cc",
     ],
     deps = [
-        ":backend",
-        ":facade",
-        ":pw_trace",
+        ":pw_trace_tokenized",
+        ":pw_trace_tokenized_buffer",
         "//pw_preprocessor",
+        "//pw_trace",
         "//pw_unit_test",
     ],
 )
@@ -177,11 +181,31 @@ pw_cc_test(
         "trace_buffer_log_test.cc",
     ],
     deps = [
-        ":backend",
-        ":facade",
-        ":pw_trace_log",
+        ":pw_trace_tokenized",
+        ":pw_trace_tokenized_buffer",
+        ":pw_trace_tokenized_buffer_log",
         "//pw_preprocessor",
         "//pw_unit_test",
+    ],
+)
+
+pw_cc_facade(
+    name = "pw_trace_tokenized_time",
+    hdrs = ["public/pw_trace_tokenized/config.h"],
+    default_backend = ":pw_trace_tokenized_fake_time",
+    includes = ["public"],
+    deps = [":headers"],
+)
+
+pw_cc_library(
+    name = "pw_trace_tokenized_fake_time",
+    srcs = [
+        "fake_trace_time.cc",
+    ],
+    deps = [
+        "pw_trace_tokenized_time.facade",
+        "//pw_status",
+        "//pw_trace:pw_trace.facade",
     ],
 )
 
@@ -204,9 +228,9 @@ pw_cc_binary(
     srcs = ["example/basic.cc"],
     deps = [
         ":pw_trace_example_to_file",
-        "//dir_pw_trace",
-        "//dir_pw_trace:pw_trace_sample_app",
         "//pw_log",
+        "//pw_trace",
+        "//pw_trace:pw_trace_sample_app",
     ],
 )
 
@@ -215,9 +239,9 @@ pw_cc_binary(
     srcs = ["example/trigger.cc"],
     deps = [
         ":pw_trace_example_to_file",
-        "//dir_pw_trace",
-        "//dir_pw_trace:pw_trace_sample_app",
         "//pw_log",
+        "//pw_trace",
+        "//pw_trace:pw_trace_sample_app",
     ],
 )
 
@@ -226,9 +250,9 @@ pw_cc_binary(
     srcs = ["example/filter.cc"],
     deps = [
         ":pw_trace_example_to_file",
-        "//dir_pw_trace",
-        "//dir_pw_trace:pw_trace_sample_app",
         "//pw_log",
+        "//pw_trace",
+        "//pw_trace:pw_trace_sample_app",
     ],
 )
 
@@ -236,12 +260,11 @@ pw_cc_library(
     name = "trace_tokenized_example_rpc",
     srcs = ["example/rpc.cc"],
     deps = [
-        ":pw_trace_rpc_service",
-        "//dir_pw_rpc:server",
-        "//dir_pw_rpc:system_server",
-        "//dir_pw_trace",
-        "//dir_pw_trace:pw_trace_sample_app",
+        ":trace_rpc_service",
         "//pw_hdlc",
         "//pw_log",
+        "//pw_rpc",
+        "//pw_rpc/system_server",
+        "//pw_trace",
     ],
 )

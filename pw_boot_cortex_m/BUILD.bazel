@@ -35,7 +35,7 @@ pw_cc_library(
         "//conditions:default": ["@platforms//:incompatible"],
     }),
     deps = [
-        "//pw_boot:facade",
+        "//pw_boot:pw_boot.facade",
         "//pw_preprocessor",
         "//pw_preprocessor:cortex_m",
     ],

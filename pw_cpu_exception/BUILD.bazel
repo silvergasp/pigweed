@@ -12,18 +12,23 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+load("//pw_build:pigweed.bzl", "pw_cc_facade")
+
 package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])
 
-filegroup(
+pw_cc_facade(
     name = "pw_cpu_exception",
     srcs = [
         "basic_handler.cc",
+        "start_exception_handler.cc",
+    ],
+    hdrs = [
         "public/pw_cpu_exception/entry.h",
         "public/pw_cpu_exception/handler.h",
         "public/pw_cpu_exception/state.h",
         "public/pw_cpu_exception/support.h",
-        "start_exception_handler.cc",
     ],
+    includes = ["public"],
 )

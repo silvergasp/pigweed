@@ -58,7 +58,6 @@ pw_cc_library(
         "//pw_checksum",
         "//pw_containers",
         "//pw_log",
-        "//pw_log:facade",
         "//pw_polyfill",
         "//pw_span",
         "//pw_status",
@@ -91,7 +90,6 @@ pw_cc_library(
         ":pw_kvs",
         "//pw_containers",
         "//pw_log",
-        "//pw_log:facade",
         "//pw_span",
         "//pw_status",
     ],
@@ -155,6 +153,32 @@ pw_cc_library(
 )
 
 pw_cc_library(
+    name = "fake_flash_12_byte_partition",
+    srcs = [
+        "fake_flash_test_partition.cc",
+    ],
+    hdrs = [
+        "public/pw_kvs/flash_test_partition.h",
+    ],
+    defines = [
+        "PW_FLASH_TEST_SECTORS=3U",
+        "PW_FLASH_TEST_SECTOR_SIZE=4U",
+        "PW_FLASH_TEST_ALIGNMENT=4U",
+    ],
+    deps = [
+        ":fake_flash",
+        ":pw_kvs",
+    ],
+)
+
+pw_cc_library(
+    name = "flash_test_partition",
+    hdrs = ["public/pw_kvs/flash_test_partition.h"],
+    includes = ["public"],
+    deps = [":pw_kvs"],
+)
+
+pw_cc_library(
     name = "fake_flash_256_aligned_partition",
     srcs = [
         "fake_flash_test_partition.cc",
@@ -203,7 +227,6 @@ pw_cc_library(
         "//pw_containers",
         "//pw_kvs",
         "//pw_log",
-        "//pw_log:facade",
         "//pw_status",
     ],
 )
@@ -371,7 +394,6 @@ pw_cc_test(
         ":pw_kvs",
         "//pw_checksum",
         "//pw_log",
-        "//pw_log:facade",
         "//pw_span",
         "//pw_status",
         "//pw_string",
@@ -388,7 +410,6 @@ pw_cc_test(
         ":pw_kvs",
         "//pw_checksum",
         "//pw_log",
-        "//pw_log:facade",
         "//pw_span",
         "//pw_status",
         "//pw_string",
@@ -405,7 +426,7 @@ pw_cc_test(
         ":pw_kvs",
         "//pw_checksum",
         "//pw_log",
-        "//pw_log:facade",
+        "//pw_log:pw_log.facade",
         "//pw_span",
         "//pw_status",
         "//pw_string",
@@ -422,7 +443,6 @@ pw_cc_test(
         ":pw_kvs",
         "//pw_checksum",
         "//pw_log",
-        "//pw_log:facade",
         "//pw_span",
         "//pw_status",
         "//pw_string",
@@ -439,7 +459,6 @@ pw_cc_test(
         ":pw_kvs",
         "//pw_checksum",
         "//pw_log",
-        "//pw_log:facade",
         "//pw_span",
         "//pw_status",
         "//pw_string",
@@ -499,7 +518,6 @@ pw_cc_test(
         ":test_partition",
         "//pw_checksum",
         "//pw_log",
-        "//pw_log:facade",
         "//pw_span",
         "//pw_unit_test",
     ],

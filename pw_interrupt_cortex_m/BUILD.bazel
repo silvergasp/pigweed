@@ -40,7 +40,7 @@ pw_cc_library(
     name = "context",
     deps = [
         ":context_headers",
-        "//pw_interrupt:context_facade",
+        "//pw_interrupt:context.facade",
     ],
 )
 

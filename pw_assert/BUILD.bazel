@@ -15,7 +15,6 @@
 load(
     "//pw_build:pigweed.bzl",
     "pw_cc_facade",
-    "pw_cc_library",
     "pw_cc_test",
 )
 
@@ -24,7 +23,7 @@ package(default_visibility = ["//visibility:public"])
 licenses(["notice"])
 
 pw_cc_facade(
-    name = "facade",
+    name = "pw_assert",
     hdrs = [
         "assert_lite_public_overrides/pw_assert_backend/assert_lite_backend.h",
         "print_and_abort_public_overrides/pw_assert_backend/assert_lite_backend.h",
@@ -35,6 +34,7 @@ pw_cc_facade(
         "public/pw_assert/internal/print_and_abort.h",
         "public/pw_assert/short.h",
     ],
+    default_backend = "//pw_assert_basic",
     includes = [
         "assert_lite_public_overrides",
         "public",
@@ -42,20 +42,6 @@ pw_cc_facade(
     deps = [
         "//pw_preprocessor",
     ],
-)
-
-pw_cc_library(
-    name = "pw_assert",
-    deps = [
-        ":facade",
-        "@pigweed_config//:pw_assert_backend",
-    ],
-)
-
-pw_cc_library(
-    name = "backend_multiplexer",
-    visibility = ["@pigweed_config//:__pkg__"],
-    deps = ["@pigweed//pw_assert_basic"],
 )
 
 pw_cc_test(
@@ -68,7 +54,7 @@ pw_cc_test(
         "pw_assert_test/fake_backend.h",
     ],
     deps = [
-        ":facade",
+        ":pw_assert.facade",
         "//pw_assert",
         "//pw_preprocessor",
         "//pw_span",

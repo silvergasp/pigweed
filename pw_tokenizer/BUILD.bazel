@@ -16,6 +16,7 @@ load("@rules_cc//cc:defs.bzl", "cc_binary")
 load(
     "//pw_build:pigweed.bzl",
     "pw_cc_binary",
+    "pw_cc_facade",
     "pw_cc_library",
     "pw_cc_test",
 )
@@ -61,23 +62,21 @@ pw_cc_library(
     visibility = ["@pigweed_config//:__pkg__"],
 )
 
-pw_cc_library(
+pw_cc_facade(
     name = "global_handler",
     srcs = ["tokenize_to_global_handler.cc"],
     hdrs = ["public/pw_tokenizer/tokenize_to_global_handler.h"],
     deps = [
         ":pw_tokenizer",
-        "@pigweed_config//:pw_tokenizer_global_handler_backend",
     ],
 )
 
-pw_cc_library(
+pw_cc_facade(
     name = "global_handler_with_payload",
     srcs = ["tokenize_to_global_handler_with_payload.cc"],
     hdrs = ["public/pw_tokenizer/tokenize_to_global_handler_with_payload.h"],
     deps = [
         ":pw_tokenizer",
-        "@pigweed_config//:pw_tokenizer_global_handler_with_payload_backend",
     ],
 )
 
@@ -161,6 +160,7 @@ cc_binary(
         "py/elf_reader_test_binary.c",
     ],
     linkopts = ["-Wl,--unresolved-symbols=ignore-all"],  # main is not defined
+    linkshared = 1,
     deps = [
         ":pw_tokenizer",
         "//pw_varint",

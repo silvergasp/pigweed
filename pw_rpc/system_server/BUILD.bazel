@@ -12,48 +12,23 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-load(
-    "//pw_build:pigweed.bzl",
-    "pw_cc_library",
-)
+load("//pw_build:pigweed.bzl", "pw_cc_facade")
 
 package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])
 
-pw_cc_library(
-    name = "facade",
-    hdrs = ["public/pw_rpc_system_server/rpc_server.h"],
-    includes = ["public"],
-    deps = [
-        "//pw_rpc",
-        "//pw_span",
-        "//pw_status",
-    ],
-)
-
-pw_cc_library(
+pw_cc_facade(
     name = "system_server",
     hdrs = [
         "public/pw_rpc_system_server/rpc_server.h",
         "public/pw_rpc_system_server/socket.h",
     ],
+    includes = ["public"],
     deps = [
-        ":facade",
         "//pw_rpc",
         "//pw_span",
         "//pw_status",
         "//pw_stream",
-        "@pigweed_config//:pw_rpc_system_server_backend",
     ],
-)
-
-pw_cc_library(
-    name = "system_server_backend_multiplexer",
-    visibility = ["@pigweed_config//:__pkg__"],
-    deps = select({
-        "//pw_build/constraints/board:stm32f429i-disc1": ["//targets/stm32f429i_disc1:system_rpc_server"],
-        "//pw_build/constraints/board:mimxrt595_evk": ["//targets/mimxrt595_evk:system_rpc_server"],
-        "//conditions:default": ["//targets/host:system_rpc_server"],
-    }),
 )

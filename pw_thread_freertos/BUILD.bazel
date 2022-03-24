@@ -41,7 +41,7 @@ pw_cc_library(
     name = "id",
     deps = [
         ":id_headers",
-        "//pw_thread:id_facade",
+        "//pw_thread:id.facade",
     ],
     # TODO(pwbug/317): This should depend on FreeRTOS but our third parties
     # currently do not have Bazel support.
@@ -72,7 +72,7 @@ pw_cc_library(
         "//pw_assert",
         "//pw_chrono:system_clock",
         "//pw_chrono_freertos:system_clock_headers",
-        "//pw_thread:sleep_facade",
+        "//pw_thread:sleep.facade",
     ],
     # TODO(pwbug/317): This should depend on FreeRTOS but our third parties
     # currently do not have Bazel support.
@@ -99,7 +99,7 @@ pw_cc_library(
         "//pw_assert",
         "//pw_string",
         "//pw_sync:binary_semaphore",
-        "//pw_thread:thread_headers",
+        "//pw_thread:thread.facade",
     ],
     # TODO(pwbug/317): This should depend on FreeRTOS but our third parties
     # currently do not have Bazel support.
@@ -128,7 +128,7 @@ pw_cc_library(
         "//pw_chrono:system_clock",
         "//pw_thread:sleep",
         "//pw_thread:test_threads_header",
-        "//pw_thread:thread_facade",
+        "//pw_thread:thread.facade",
     ],
 )
 
@@ -149,7 +149,7 @@ pw_cc_library(
         "//pw_chrono:system_clock",
         "//pw_thread:sleep",
         "//pw_thread:test_threads_header",
-        "//pw_thread:thread_facade",
+        "//pw_thread:thread.facade",
     ],
 )
 
@@ -179,7 +179,7 @@ pw_cc_library(
     name = "yield",
     deps = [
         ":yield_headers",
-        "//pw_thread:yield_facade",
+        "//pw_thread:yield.facade",
     ],
 )
 
@@ -214,26 +214,19 @@ pw_cc_library(
         "//pw_log",
         "//pw_protobuf",
         "//pw_status",
-        "//pw_thread:protos",
         "//pw_thread:snapshot",
+        "//pw_thread:thread_pw_proto.pwpb",
     ],
     # TODO(pwbug/317): This should depend on FreeRTOS but our third parties
     # currently do not have Bazel support.
 )
 
 pw_cc_facade(
-    name = "freertos_tasktcb_facade",
+    name = "freertos_tasktcb",
     hdrs = [
         "public/pw_thread_freertos/freertos_tsktcb.h",
     ],
     includes = ["public"],
     # TODO(pwbug/317): This should depend on FreeRTOS but our third parties
     # currently do not have Bazel support.
-)
-
-pw_cc_library(
-    name = "freertos_tasktcb",
-    deps = [
-        ":freertos_tasktcb_facade",
-    ],
 )

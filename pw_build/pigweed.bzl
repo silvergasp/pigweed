@@ -21,9 +21,7 @@ load(
 load(
     "//pw_build/bazel_internal:facade.bzl",
     _pw_alias = "pw_alias",
-    # TODO(): Uncomment this once we have transitioned to the toolchain based facade
-    # API.
-    # _pw_cc_facade = "pw_cc_facade",
+    _pw_cc_facade = "pw_cc_facade",
     _pw_facade = "pw_facade",
     _pw_facade_toolchain = "pw_facade_toolchain",
 )
@@ -52,23 +50,15 @@ def pw_cc_test(**kwargs):
         kwargs["deps"].append("@pigweed//pw_assert")
     _add_cc_and_c_targets(native.cc_test, kwargs)
 
-def pw_cc_facade(**kwargs):
-    # Bazel facades should be source only cc_library's this is to simplify
-    # lazy header evaluation. Bazel headers are not 'precompiled' so the build
-    # system does not check to see if the build has the right dependant headers
-    # in the sandbox. If a source file is declared here and includes a header
-    # file the toolchain will compile as normal and complain about the missing
-    # backend headers.
-    if "srcs" in kwargs.keys():
-        fail("'srcs' attribute does not exist in pw_cc_facade, please use \
-        main implementing target.")
-    _add_cc_and_c_targets(native.cc_library, kwargs)
-
 # Export internal symbols.
 pw_alias = _pw_alias
 pw_facade = _pw_facade
-pw_facade_toolchain = _pw_facade_toolchain
+pw_cc_facade = _pw_cc_facade
 
-# TODO(): Uncomment this once we have transitioned to the toolchain based facade
-# API.
-# pw_cc_facade = _pw_cc_facade
+def pw_facade_toolchain(**kwargs):
+    # Bazel requires a label keyed string dict for the backends attribute.
+    # Swapping the keys and values of the dict ensure that there is only a
+    # single backend defined per facade. This also improves the readability
+    # of the configuration.
+    kwargs["backends"] = {v: k for k, v in kwargs["backends"].items()}
+    _pw_facade_toolchain(**kwargs)

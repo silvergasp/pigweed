@@ -28,7 +28,8 @@ package(default_visibility = ["//visibility:public"])
 licenses(["notice"])
 
 pw_cc_facade(
-    name = "binary_semaphore_facade",
+    name = "binary_semaphore",
+    srcs = ["binary_semaphore.cc"],
     hdrs = [
         "public/pw_sync/binary_semaphore.h",
     ],
@@ -39,31 +40,11 @@ pw_cc_facade(
     ],
 )
 
-pw_cc_library(
-    name = "binary_semaphore",
-    srcs = [
-        "binary_semaphore.cc",
-    ],
-    deps = [
-        ":binary_semaphore_facade",
-        "@pigweed_config//:pw_sync_binary_semaphore_backend",
-    ],
-)
-
-pw_cc_library(
-    name = "binary_semaphore_backend_multiplexer",
-    visibility = ["@pigweed_config//:__pkg__"],
-    deps = select({
-        "@platforms//os:none": ["//pw_sync_baremetal:binary_semaphore"],
-        "//pw_build/constraints/rtos:embos": ["//pw_sync_embos:binary_semaphore"],
-        "//pw_build/constraints/rtos:freertos": ["//pw_sync_freertos:binary_semaphore"],
-        "//pw_build/constraints/rtos:threadx": ["//pw_sync_threadx:binary_semaphore"],
-        "//conditions:default": ["//pw_sync_stl:binary_semaphore"],
-    }),
-)
-
 pw_cc_facade(
-    name = "counting_semaphore_facade",
+    name = "counting_semaphore",
+    srcs = [
+        "counting_semaphore.cc",
+    ],
     hdrs = [
         "public/pw_sync/counting_semaphore.h",
     ],
@@ -72,29 +53,6 @@ pw_cc_facade(
         "//pw_chrono:system_clock",
         "//pw_preprocessor",
     ],
-)
-
-pw_cc_library(
-    name = "counting_semaphore",
-    srcs = [
-        "counting_semaphore.cc",
-    ],
-    deps = [
-        ":counting_semaphore_facade",
-        "@pigweed_config//:pw_sync_counting_semaphore_backend",
-    ],
-)
-
-pw_cc_library(
-    name = "counting_semaphore_backend_multiplexer",
-    visibility = ["@pigweed_config//:__pkg__"],
-    deps = select({
-        "@platforms//os:none": ["//pw_sync_baremetal:counting_semaphore"],
-        "//pw_build/constraints/rtos:embos": ["//pw_sync_embos:counting_semaphore"],
-        "//pw_build/constraints/rtos:freertos": ["//pw_sync_freertos:counting_semaphore"],
-        "//pw_build/constraints/rtos:threadx": ["//pw_sync_threadx:counting_semaphore"],
-        "//conditions:default": ["//pw_sync_stl:counting_semaphore"],
-    }),
 )
 
 pw_cc_library(
@@ -134,7 +92,10 @@ pw_cc_library(
 )
 
 pw_cc_facade(
-    name = "mutex_facade",
+    name = "mutex",
+    srcs = [
+        "mutex.cc",
+    ],
     hdrs = [
         "public/pw_sync/mutex.h",
     ],
@@ -146,71 +107,29 @@ pw_cc_facade(
     ],
 )
 
-pw_cc_library(
-    name = "mutex",
-    srcs = [
-        "mutex.cc",
-    ],
-    deps = [
-        ":mutex_facade",
-        "@pigweed_config//:pw_sync_mutex_backend",
-    ],
-)
-
-pw_cc_library(
-    name = "mutex_backend_multiplexer",
-    visibility = ["@pigweed_config//:__pkg__"],
-    deps = select({
-        "@platforms//os:none": ["//pw_sync_baremetal:mutex"],
-        "//pw_build/constraints/rtos:embos": ["//pw_sync_embos:mutex"],
-        "//pw_build/constraints/rtos:freertos": ["//pw_sync_freertos:mutex"],
-        "//pw_build/constraints/rtos:threadx": ["//pw_sync_threadx:mutex"],
-        "//conditions:default": ["//pw_sync_stl:mutex"],
-    }),
-)
-
 pw_cc_facade(
-    name = "timed_mutex_facade",
+    name = "timed_mutex",
+    srcs = [
+        "timed_mutex.cc",
+    ],
     hdrs = [
         "public/pw_sync/timed_mutex.h",
     ],
     includes = ["public"],
     deps = [
         ":lock_annotations",
-        ":mutex_facade",
+        ":mutex",
         ":virtual_basic_lockable",
         "//pw_chrono:system_clock",
         "//pw_preprocessor",
     ],
 )
 
-pw_cc_library(
-    name = "timed_mutex",
-    srcs = [
-        "timed_mutex.cc",
-    ],
-    deps = [
-        ":mutex",
-        ":timed_mutex_facade",
-        ":virtual_basic_lockable",
-        "@pigweed_config//:pw_sync_timed_mutex_backend",
-    ],
-)
-
-pw_cc_library(
-    name = "timed_mutex_backend_multiplexer",
-    visibility = ["@pigweed_config//:__pkg__"],
-    deps = select({
-        "@platforms//os:none": ["//pw_sync_baremetal:timed_mutex"],
-        "//pw_build/constraints/rtos:embos": ["//pw_sync_embos:timed_mutex"],
-        "//pw_build/constraints/rtos:freertos": ["//pw_sync_freertos:timed_mutex"],
-        "//pw_build/constraints/rtos:threadx": ["//pw_sync_threadx:timed_mutex"],
-        "//conditions:default": ["//pw_sync_stl:timed_mutex"],
-    }),
-)
-
 pw_cc_facade(
-    name = "interrupt_spin_lock_facade",
+    name = "interrupt_spin_lock",
+    srcs = [
+        "interrupt_spin_lock.cc",
+    ],
     hdrs = [
         "public/pw_sync/interrupt_spin_lock.h",
     ],
@@ -222,80 +141,24 @@ pw_cc_facade(
     ],
 )
 
-pw_cc_library(
-    name = "interrupt_spin_lock",
-    srcs = [
-        "interrupt_spin_lock.cc",
-    ],
-    deps = [
-        ":interrupt_spin_lock_facade",
-        "@pigweed_config//:pw_sync_interrupt_spin_lock_backend",
-    ],
-)
-
-pw_cc_library(
-    name = "interrupt_spin_lock_backend_multiplexer",
-    visibility = ["@pigweed_config//:__pkg__"],
-    deps = select({
-        "@platforms//os:none": ["//pw_sync_baremetal:interrupt_spin_lock"],
-        "//pw_build/constraints/rtos:embos": ["//pw_sync_embos:interrupt_spin_lock"],
-        "//pw_build/constraints/rtos:freertos": ["//pw_sync_freertos:interrupt_spin_lock"],
-        "//pw_build/constraints/rtos:threadx": ["//pw_sync_threadx:interrupt_spin_lock"],
-        "//conditions:default": ["//pw_sync_stl:interrupt_spin_lock"],
-    }),
-)
-
 pw_cc_facade(
-    name = "thread_notification_facade",
+    name = "thread_notification",
     hdrs = [
         "public/pw_sync/thread_notification.h",
     ],
     includes = ["public"],
 )
 
-pw_cc_library(
-    name = "thread_notification",
-    deps = [
-        ":thread_notification_facade",
-        "@pigweed_config//:pw_sync_thread_notification_backend",
-    ],
-)
-
-pw_cc_library(
-    name = "thread_notification_backend_multiplexer",
-    visibility = ["@pigweed_config//:__pkg__"],
-    deps = select({
-        "//conditions:default": ["//pw_sync:binary_semaphore_thread_notification_backend"],
-    }),
-)
-
 pw_cc_facade(
-    name = "timed_thread_notification_facade",
+    name = "timed_thread_notification",
     hdrs = [
         "public/pw_sync/timed_thread_notification.h",
     ],
     includes = ["public"],
     deps = [
-        ":thread_notification_facade",
+        ":thread_notification",
         "//pw_chrono:system_clock",
     ],
-)
-
-pw_cc_library(
-    name = "timed_thread_notification",
-    deps = [
-        ":thread_notification",
-        ":timed_thread_notification_facade",
-        "@pigweed_config//:pw_sync_timed_thread_notification_backend",
-    ],
-)
-
-pw_cc_library(
-    name = "timed_thread_notification_backend_multiplexer",
-    visibility = ["@pigweed_config//:__pkg__"],
-    deps = select({
-        "//conditions:default": ["//pw_sync:binary_semaphore_timed_thread_notification_backend"],
-    }),
 )
 
 pw_cc_library(
@@ -318,9 +181,9 @@ pw_cc_library(
     name = "binary_semaphore_thread_notification_backend",
     target_compatible_with = select(TARGET_COMPATIBLE_WITH_HOST_SELECT),
     deps = [
-        ":binary_semaphore_facade",
+        ":binary_semaphore",
         ":binary_semaphore_thread_notification_backend_headers",
-        ":thread_notification_facade",
+        ":thread_notification",
     ],
 )
 
@@ -347,7 +210,7 @@ pw_cc_library(
     deps = [
         ":binary_semaphore_thread_notification_backend",
         ":binary_semaphore_timed_thread_notification_backend_headers",
-        "//pw_sync:timed_thread_notification_facade",
+        "//pw_sync:timed_thread_notification",
     ],
 )
 

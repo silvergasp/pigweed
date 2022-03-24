@@ -15,7 +15,6 @@
 load(
     "//pw_build:pigweed.bzl",
     "pw_cc_facade",
-    "pw_cc_library",
 )
 
 package(default_visibility = ["//visibility:public"])
@@ -23,41 +22,9 @@ package(default_visibility = ["//visibility:public"])
 licenses(["notice"])
 
 pw_cc_facade(
-    name = "context_facade",
+    name = "context",
     hdrs = [
         "public/pw_interrupt/context.h",
     ],
     includes = ["public"],
-)
-
-pw_cc_library(
-    name = "context",
-    deps = [
-        ":context_facade",
-        "@pigweed_config//:pw_interrupt_backend",
-    ],
-)
-
-pw_cc_library(
-    name = "backend_multiplexer",
-    # Normally this would be done in the backend packages but because there is
-    # no host implementation we have to define this here.
-    target_compatible_with = select({
-        "@platforms//cpu:armv7-m": [],
-        "@platforms//cpu:armv7e-m": [],
-        "@platforms//cpu:armv8-m": [],
-        "//conditions:default": ["@platforms//:incompatible"],
-    }),
-    visibility = ["@pigweed_config//:__pkg__"],
-    deps = select({
-        "@platforms//cpu:armv7-m": ["//pw_interrupt_cortex_m:context_armv7m"],
-        "@platforms//cpu:armv7e-m": ["//pw_interrupt_cortex_m:context_armv7m"],
-        "@platforms//cpu:armv8-m": ["//pw_interrupt_cortex_m:context_armv8m"],
-        # This is required for this to be a valid select when building for the
-        # host i.e. 'bazel build //pw_interrupt/...'. The
-        # target_compatible_with attribute is used to skip this target when
-        # built with a wildcard. If explicitly depended on for a host build
-        # the build will fail.
-        "//conditions:default": [],
-    }),
 )

@@ -15,7 +15,6 @@
 load(
     "//pw_build:pigweed.bzl",
     "pw_cc_facade",
-    "pw_cc_library",
 )
 
 package(default_visibility = ["//visibility:public"])
@@ -23,20 +22,13 @@ package(default_visibility = ["//visibility:public"])
 licenses(["notice"])
 
 pw_cc_facade(
-    name = "facade",
+    name = "pw_boot",
     hdrs = [
         "public/pw_boot/boot.h",
     ],
+    default_backend = "//pw_boot_cortex_m",
     includes = ["public"],
     deps = [
         "//pw_preprocessor",
-    ],
-)
-
-pw_cc_library(
-    name = "pw_boot",
-    deps = [
-        ":facade",
-        "@pigweed_config//:pw_boot_backend",
     ],
 )

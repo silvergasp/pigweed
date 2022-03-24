@@ -25,7 +25,7 @@ package(default_visibility = ["//visibility:public"])
 licenses(["notice"])
 
 pw_cc_facade(
-    name = "facade",
+    name = "pw_log",
     hdrs = [
         "public/pw_log/config.h",
         "public/pw_log/levels.h",
@@ -34,17 +34,10 @@ pw_cc_facade(
         "public/pw_log/short.h",
         "public/pw_log/shorter.h",
     ],
+    default_backend = "//pw_log_basic",
     includes = ["public"],
     deps = [
         "//pw_preprocessor",
-    ],
-)
-
-pw_cc_library(
-    name = "pw_log",
-    deps = [
-        ":facade",
-        "@pigweed_config//:pw_log_backend",
     ],
 )
 
@@ -73,8 +66,8 @@ pw_cc_library(
         "public/pw_log/proto_utils.h",
     ],
     deps = [
-        ":facade",
         ":log_proto_cc.pwpb",
+        ":pw_log.facade",
         "//pw_bytes",
         "//pw_log_tokenized:headers",
         "//pw_protobuf",
@@ -113,7 +106,6 @@ pw_cc_test(
         "basic_log_test_plain_c.c",
     ],
     deps = [
-        ":facade",
         ":pw_log",
         "//pw_preprocessor",
         "//pw_unit_test",
@@ -137,9 +129,9 @@ pw_cc_test(
         "proto_utils_test.cc",
     ],
     deps = [
-        ":facade",
         ":log_proto_cc.pwpb",
         ":proto_utils",
+        ":pw_log.facade",
         "//pw_preprocessor",
         "//pw_protobuf",
         "//pw_protobuf:bytes_utils",

@@ -12,7 +12,11 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-load("//pw_build:pigweed.bzl", "pw_facade_toolchain")
+load(
+    "//pw_build:pigweed.bzl",
+    "pw_cc_library",
+    "pw_facade_toolchain",
+)
 
 package(default_visibility = ["//visibility:public"])
 
@@ -31,6 +35,13 @@ toolchain_type(name = "facade_toolchain_type")
 pw_facade_toolchain(
     name = "default_facade_backends_toolchain",
     backends = {
-        "//pw_build/compilation_tests:backend": "//pw_build/compilation_tests:pw_facade_backend_alias",
+        "//pw_build/compilation_tests:pw_facade_backend_alias": "//pw_build/compilation_tests:backend",
     },
+)
+
+# This target is used as a catch all backend, and can be used to ensure that
+# Bazel skips building targets that don't have a matching backend.
+pw_cc_library(
+    name = "unimplemented_backend",
+    target_compatible_with = ["@platforms//:incompatible"],
 )

@@ -35,7 +35,7 @@ pw_cc_library(
         "public_overrides",
     ],
     deps = [
-        "//pw_assert:facade",
+        "//pw_assert:pw_assert.facade",
         "//pw_log",
         "//pw_preprocessor",
     ],

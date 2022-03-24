@@ -15,6 +15,7 @@
 load(
     "//pw_build:pigweed.bzl",
     "pw_cc_library",
+    "pw_facade_toolchain",
 )
 
 package(default_visibility = ["//visibility:public"])
@@ -27,7 +28,42 @@ pw_cc_library(
     deps = [
         "//pw_hdlc:pw_rpc",
         "//pw_hdlc:rpc_channel_output",
-        "//pw_rpc/system_server:facade",
+        "//pw_rpc/system_server:system_server.facade",
         "//pw_stream:socket_stream",
     ],
 )
+
+HOST_OS = [
+    "linux",
+    "macos",
+    "windows",
+]
+
+[
+    pw_facade_toolchain(
+        name = "host_backend_" + os,
+        backends = {
+            # pw_chrono
+            "//pw_chrono:system_clock": "//pw_chrono_stl:system_clock",
+            "//pw_chrono:system_timer": "//pw_chrono_stl:system_timer",
+            # pw_malloc
+            "//pw_malloc": "//pw_malloc_freelist",
+            # pw_sync
+            "//pw_sync:binary_semaphore": "//pw_sync_stl:binary_semaphore",
+            "//pw_sync:counting_semaphore": "//pw_sync_stl:counting_semaphore",
+            "//pw_sync:mutex": "//pw_sync_stl:mutex",
+            "//pw_sync:timed_mutex": "//pw_sync_stl:timed_mutex",
+            "//pw_sync:interrupt_spin_lock": "//pw_sync_stl:interrupt_spin_lock",
+            # pw_thread
+            "//pw_thread:sleep": "//pw_thread_stl:sleep",
+            "//pw_thread:thread": "//pw_thread_stl:thread",
+            "//pw_thread:yield": "//pw_thread_stl:yield",
+            # pw_sys_io
+            "//pw_sys_io": "//pw_sys_io_stdio",
+        },
+        target_compatible_with = [
+            "@platforms//os:" + os,
+        ],
+    )
+    for os in HOST_OS
+]

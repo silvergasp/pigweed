@@ -32,6 +32,6 @@ pw_cc_library(
     deps = [
         "//pw_boot_cortex_m:armv7m",
         "//pw_preprocessor",
-        "//pw_sys_io:facade",
+        "//pw_sys_io:pw_sys_io.facade",
     ],
 )

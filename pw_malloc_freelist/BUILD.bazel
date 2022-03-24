@@ -41,7 +41,7 @@ pw_cc_library(
         ":headers",
         "//pw_allocator:block",
         "//pw_allocator:freelist_heap",
-        "//pw_malloc:facade",
+        "//pw_malloc:pw_malloc.facade",
         "//pw_preprocessor",
     ],
 )
@@ -51,6 +51,7 @@ pw_cc_test(
     srcs = [
         "freelist_malloc_test.cc",
     ],
+    malloc = ":pw_malloc_freelist",
     deps = [
         ":headers",
         ":pw_malloc_freelist",

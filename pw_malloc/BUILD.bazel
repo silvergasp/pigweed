@@ -15,7 +15,6 @@
 load(
     "//pw_build:pigweed.bzl",
     "pw_cc_facade",
-    "pw_cc_library",
 )
 
 package(default_visibility = ["//visibility:public"])
@@ -23,23 +22,9 @@ package(default_visibility = ["//visibility:public"])
 licenses(["notice"])
 
 pw_cc_facade(
-    name = "facade",
+    name = "pw_malloc",
     hdrs = [
         "public/pw_malloc/malloc.h",
     ],
     includes = ["public"],
-)
-
-pw_cc_library(
-    name = "pw_malloc",
-    deps = [
-        ":facade",
-        "@pigweed_config//:pw_malloc_backend",
-    ],
-)
-
-pw_cc_library(
-    name = "backend_multiplexer",
-    visibility = ["@pigweed_config//:__pkg__"],
-    deps = ["//pw_malloc_freelist"],
 )

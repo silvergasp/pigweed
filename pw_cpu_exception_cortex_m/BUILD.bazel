@@ -17,6 +17,7 @@ load(
     "pw_cc_library",
     "pw_cc_test",
 )
+load("//pw_protobuf_compiler:proto.bzl", "pw_proto_library")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -25,6 +26,13 @@ licenses(["notice"])
 pw_cc_library(
     name = "config",
     hdrs = ["pw_cpu_exception_cortex_m_private/config.h"],
+    target_compatible_with = select({
+        "@platforms//cpu:armv7-m": [],
+        "@platforms//cpu:armv7e-m": [],
+        "@platforms//cpu:armv7e-mf": [],
+        "@platforms//cpu:armv8-m": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
 )
 
 pw_cc_library(
@@ -33,7 +41,7 @@ pw_cc_library(
     includes = ["public"],
     deps = [
         "//pw_preprocessor",
-        "//pw_preprocessor:arch",
+        "//pw_preprocessor:cortex_m",
     ],
 )
 
@@ -47,7 +55,7 @@ pw_cc_library(
         ":cortex_m_constants",
         ":cpu_state",
         "//pw_log",
-        "//pw_preprocessor:arch",
+        "//pw_preprocessor:cortex_m",
     ],
 )
 
@@ -61,7 +69,7 @@ pw_cc_library(
         ":util",
         "//pw_log",
         "//pw_preprocessor",
-        "//pw_preprocessor:arch",
+        "//pw_preprocessor:cortex_m",
         "//pw_string",
     ],
 )
@@ -72,9 +80,9 @@ pw_cc_library(
     hdrs = ["public/pw_cpu_exception_cortex_m/proto_dump.h"],
     includes = ["public"],
     deps = [
+        "cpu_state_proto_cc.pwpb",
         ":config",
         ":cpu_state",
-        ":cpu_state_protos",
         ":support",
         "//pw_protobuf",
         "//pw_status",
@@ -85,6 +93,12 @@ pw_cc_library(
 proto_library(
     name = "cpu_state_protos",
     srcs = ["pw_cpu_exception_cortex_m_protos/cpu_state.proto"],
+    strip_import_prefix = "//pw_cpu_exception_cortex_m",
+)
+
+pw_proto_library(
+    name = "cpu_state_proto_cc",
+    deps = [":cpu_state_protos"],
 )
 
 pw_cc_library(
@@ -101,11 +115,12 @@ pw_cc_library(
         ":cortex_m_constants",
         ":proto_dump",
         ":support",
+        "cpu_state_proto_cc.pwpb",
         ":util",
         # TODO(pwbug/101): Need to add support for facades/backends to Bazel.
         "//pw_cpu_exception",
         "//pw_preprocessor",
-        "//pw_preprocessor:arch",
+        "//pw_preprocessor:cortex_m",
     ],
 )
 
@@ -117,14 +132,14 @@ pw_cc_library(
         ":config",
         ":cortex_m_constants",
         ":cpu_state",
-        ":cpu_state_protos",
+        ":cpu_state_proto_cc.pwpb",
         ":proto_dump",
         ":util",
         "//pw_log",
         "//pw_protobuf",
         "//pw_status",
-        "//pw_thread:protos",
         "//pw_thread:snapshot",
+        "//pw_thread:thread_pw_proto.pwpb",
     ],
 )
 
@@ -132,7 +147,7 @@ pw_cc_library(
     name = "cortex_m_constants",
     hdrs = ["pw_cpu_exception_cortex_m_private/cortex_m_constants.h"],
     visibility = ["//visibility:private"],
-    deps = ["//pw_preprocessor:arch"],
+    deps = ["//pw_preprocessor:cortex_m"],
 )
 
 pw_cc_test(
