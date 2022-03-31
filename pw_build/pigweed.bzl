@@ -11,12 +11,21 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
-"""Pigweed build environment for bazel."""
+"""Pigweed build environment for Bazel."""
 
 load(
     "//pw_build/bazel_internal:pigweed_internal.bzl",
     _add_cc_and_c_targets = "add_cc_and_c_targets",
     _has_pw_assert_dep = "has_pw_assert_dep",
+)
+load(
+    "//pw_build/bazel_internal:facade.bzl",
+    _pw_alias = "pw_alias",
+    # TODO(): Uncomment this once we have transitioned to the toolchain based facade
+    # API.
+    # _pw_cc_facade = "pw_cc_facade",
+    _pw_facade = "pw_facade",
+    _pw_facade_toolchain = "pw_facade_toolchain",
 )
 
 def pw_cc_binary(**kwargs):
@@ -54,3 +63,12 @@ def pw_cc_facade(**kwargs):
         fail("'srcs' attribute does not exist in pw_cc_facade, please use \
         main implementing target.")
     _add_cc_and_c_targets(native.cc_library, kwargs)
+
+# Export internal symbols.
+pw_alias = _pw_alias
+pw_facade = _pw_facade
+pw_facade_toolchain = _pw_facade_toolchain
+
+# TODO(): Uncomment this once we have transitioned to the toolchain based facade
+# API.
+# pw_cc_facade = _pw_cc_facade

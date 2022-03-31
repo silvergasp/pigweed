@@ -844,6 +844,8 @@ Bazel
 Bazel is currently very experimental, and only builds for host and ARM Cortex-M
 microcontrollers.
 
+Common Rules
+------------
 The common configuration for Bazel for all modules is in the ``pigweed.bzl``
 file. The built-in Bazel rules ``cc_binary``, ``cc_library``, and ``cc_test``
 are wrapped with ``pw_cc_binary``, ``pw_cc_library``, and ``pw_cc_test``.
@@ -985,3 +987,50 @@ platform:
       ["@your_repo//build_settings/constraints/board:nucleo_l432kc"],
   )
 
+Facades & Backends
+------------------
+
+Bazel implements :ref:`facade<docs-module-structure-facades>` using a custom
+toolchain to resolve virtual dependencies at build time. The ``pw_alias``,
+``pw_cc_facade``, and ``pw_facade_toolchain`` rules described below are in
+``facade.bzl``.
+
+pw_alias
+^^^^^^^^
+
+A simple label that represents a facade-backend association. At a minimum, it
+requires a ``name`` like any other Bazel rule. It can optionally include a
+``default_value`` referencing another target label that's used as the default
+backend for the facade that uses this alias.
+
+pw_cc_facade
+^^^^^^^^^^^^
+
+The ``pw_cc_facade`` rule creates a ``cc_library`` with an associated `pw_alias`
+label. This alias association allows the facade to provide header files,
+compilation options or other attributes typically provided by ``cc_library``.
+
+``pw_cc_facade`` accepts the same attributes as a typical ``cc_library``, but
+requires ``hdrs`` in order to define an interface for backends, along with
+``backend_alias`` (the ``pw_alias`` label) to associate this facade with a
+corresponding backend ``cc_library`` for a particular configuration.
+
+``pw_cc_facade`` instantiates these targets:
+
+* ``<target_name>``: the public-facing ``cc_library``, with an underlying facade
+  included in its ``deps``. This facade maps to a backend at build time,
+  essentially including the appropriate backend in ``deps``.
+* ``<target_name>_headers``: internal ``cc_library`` containing just the headers
+  or this facade. It's intended to be included in ``deps`` of backend
+  ``cc_library`` implementations for this facade.
+
+pw_facade_toolchain
+^^^^^^^^^^^^^^^^^^^
+
+Encapsulates a mapping of facade alias labels to their backend implementations.
+To set up this mapping, declare a ``pw_facade_toolchain`` and set the
+``backends`` dict accordingly. Note that this declared toolchain must be
+registered via ``register_toolchains`` in your project's ``WORKSPACE`` file just
+like any other Bazel toolchain in order to get invoked at build time. See the
+`Bazel Toolchain docs
+<https://docs.bazel.build/versions/main/toolchains.html>`_ for more info.

@@ -376,3 +376,8 @@ maven_install(
         "https://repo1.maven.org/maven2",
     ],
 )
+
+register_toolchains(
+    # Use default facade backend implementations.
+    "//pw_build:default_facade_backends_toolchain",
+)

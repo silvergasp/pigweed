@@ -12,6 +12,8 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+load("//pw_build:pigweed.bzl", "pw_facade_toolchain")
+
 package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])
@@ -20,5 +22,15 @@ config_setting(
     name = "kythe",
     values = {
         "define": "kythe_corpus=pigweed.googlesource.com/pigweed/pigweed",
+    },
+)
+
+# Toolchain type used for facade backend resolution.
+toolchain_type(name = "facade_toolchain_type")
+
+pw_facade_toolchain(
+    name = "default_facade_backends_toolchain",
+    backends = {
+        "//pw_build/compilation_tests:backend": "//pw_build/compilation_tests:pw_facade_backend_alias",
     },
 )
