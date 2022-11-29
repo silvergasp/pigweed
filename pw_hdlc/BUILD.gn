@@ -18,6 +18,7 @@ import("$dir_pw_bloat/bloat.gni")
 import("$dir_pw_build/python.gni")
 import("$dir_pw_build/target_types.gni")
 import("$dir_pw_docgen/docs.gni")
+import("$dir_pw_fuzzer/fuzzer.gni")
 import("$dir_pw_unit_test/test.gni")
 
 config("default_config") {
@@ -141,6 +142,7 @@ pw_test_group("tests") {
   tests = [
     ":encoder_test",
     ":decoder_test",
+    ":decoder_encoder_fuzzer",
     ":rpc_channel_test",
     ":encoded_size_test",
     ":wire_packet_parser_test",
@@ -229,4 +231,12 @@ pw_doc_group("docs") {
     "py/pw_hdlc/encode.py",
   ]
   report_deps = [ ":size_report" ]
+}
+
+pw_fuzzer("decoder_encoder_fuzzer") {
+  sources = [ "decoder_encoder_fuzzer.cc" ]
+  deps = [
+    ":decoder",
+    ":encoder",
+  ]
 }
