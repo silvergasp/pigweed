@@ -243,6 +243,21 @@ pw_toolchain_host_clang = {
       pw_toolchain_COVERAGE_ENABLED = true
     }
   }
+
+   introspector = {
+    name = "host_clang_introspector"
+    forward_variables_from(_host_clang_toolchain, "*")
+    defaults = {
+      forward_variables_from(_defaults, "*")
+
+      # Use debug mode to get proper debug information.
+      default_configs += [ "$dir_pw_build:optimize_debugging" ]
+      default_configs += [ "$dir_pw_toolchain/host_clang:sanitize_introspector" ]
+
+      # Allow coverage generation if pw_toolchain_SANITIZERS = ["coverage"].
+      pw_toolchain_COVERAGE_ENABLED = true
+    }
+  }
 }
 
 # Describes host clang toolchains.

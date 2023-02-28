@@ -267,6 +267,18 @@ pw_target_toolchain_host = {
     }
   }
 
+  clang_introspector = {
+    name = "host_clang_introspector"
+    _toolchain_base = pw_toolchain_host_clang.introspector
+    forward_variables_from(_toolchain_base, "*", _excluded_members)
+    defaults = {
+      forward_variables_from(_toolchain_base.defaults, "*")
+      forward_variables_from(_host_common, "*")
+      forward_variables_from(_os_specific_config, "*")
+      default_configs += _clang_default_configs
+    }
+  }
+
   gcc_debug = {
     name = "host_gcc_debug"
     _toolchain_base = pw_toolchain_host_gcc.debug
